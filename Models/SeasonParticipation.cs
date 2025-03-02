@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using YourNamespace.Models;
 
 namespace f1_predictions.Models
 {
@@ -9,14 +8,14 @@ namespace f1_predictions.Models
         public Guid Id { get; set; }
 
         [Required]
-        public Guid ParticipantId { get; set; }
+        public required Guid ParticipantId { get; set; }
 
-        public User Participant { get; set; } // Navigation property
+        public required User Participant { get; set; } // Navigation property
 
         [Required]
-        public Guid SeasonId { get; set; }
+        public required Guid SeasonId { get; set; }
 
-        public Season Season { get; set; } // Navigation property
+        public required Season Season { get; set; } // Navigation property
 
         public double Points { get; set; }
     }

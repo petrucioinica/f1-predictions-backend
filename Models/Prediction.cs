@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using YourNamespace.Models;
 
 namespace f1_predictions.Models
 {
@@ -9,14 +8,14 @@ namespace f1_predictions.Models
         public Guid Id { get; set; }
 
         [Required]
-        public Guid GpId { get; set; }
+        public required Guid GpId { get; set; }
 
-        public GrandPrix GrandPrix { get; set; } // Navigation property
+        public required GrandPrix GrandPrix { get; set; } // Navigation property
 
         [Required]
-        public Guid PlayerId { get; set; }
+        public required Guid PlayerId { get; set; }
 
-        public User Player { get; set; } // Navigation property
+        public required User Player { get; set; } // Navigation property
 
         [Required]
         public PredictionStatus Status { get; set; } // Enum for status

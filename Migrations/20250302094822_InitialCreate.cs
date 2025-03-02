@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace f1_predictions.Migrations
 {
     /// <inheritdoc />
@@ -60,26 +62,6 @@ namespace f1_predictions.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Constructors",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Points = table.Column<double>(type: "double precision", nullable: false),
-                    SeasonId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Constructors", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Constructors_Seasons_SeasonId",
-                        column: x => x.SeasonId,
-                        principalTable: "Seasons",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "GrandPrixes",
                 columns: table => new
                 {
@@ -90,8 +72,8 @@ namespace f1_predictions.Migrations
                     SeasonId = table.Column<Guid>(type: "uuid", nullable: false),
                     Round = table.Column<int>(type: "integer", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    CircuitName = table.Column<string>(type: "text", nullable: false),
-                    Country = table.Column<string>(type: "text", nullable: false)
+                    CircuitName = table.Column<string>(type: "text", nullable: true),
+                    Country = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -131,41 +113,11 @@ namespace f1_predictions.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Drivers",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    FirstName = table.Column<string>(type: "text", nullable: false),
-                    LastName = table.Column<string>(type: "text", nullable: false),
-                    DriverCode = table.Column<string>(type: "text", nullable: false),
-                    DriverNumber = table.Column<int>(type: "integer", nullable: false),
-                    ConstructorId = table.Column<Guid>(type: "uuid", nullable: false),
-                    SeasonId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Drivers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Drivers_Constructors_ConstructorId",
-                        column: x => x.ConstructorId,
-                        principalTable: "Constructors",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Drivers_Seasons_SeasonId",
-                        column: x => x.SeasonId,
-                        principalTable: "Seasons",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Predictions",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     GpId = table.Column<Guid>(type: "uuid", nullable: false),
-                    GrandPrixId = table.Column<Guid>(type: "uuid", nullable: false),
                     PlayerId = table.Column<Guid>(type: "uuid", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -173,8 +125,8 @@ namespace f1_predictions.Migrations
                 {
                     table.PrimaryKey("PK_Predictions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Predictions_GrandPrixes_GrandPrixId",
-                        column: x => x.GrandPrixId,
+                        name: "FK_Predictions_GrandPrixes_GpId",
+                        column: x => x.GpId,
                         principalTable: "GrandPrixes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -186,20 +138,15 @@ namespace f1_predictions.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Constructors_SeasonId",
-                table: "Constructors",
-                column: "SeasonId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Drivers_ConstructorId",
-                table: "Drivers",
-                column: "ConstructorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Drivers_SeasonId",
-                table: "Drivers",
-                column: "SeasonId");
+            migrationBuilder.InsertData(
+                table: "Roles",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { new Guid("12f3cd07-40d9-4732-aaf4-b0b5a5314a44"), "Player" },
+                    { new Guid("4c64de3b-1d1b-464f-8a71-ee25949a689e"), "Admin" },
+                    { new Guid("b04d0e07-9b26-4417-a57e-1ed63f0c3b54"), "GameMaster" }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_GrandPrixes_SeasonId",
@@ -207,9 +154,9 @@ namespace f1_predictions.Migrations
                 column: "SeasonId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Predictions_GrandPrixId",
+                name: "IX_Predictions_GpId",
                 table: "Predictions",
-                column: "GrandPrixId");
+                column: "GpId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Predictions_PlayerId",
@@ -236,16 +183,10 @@ namespace f1_predictions.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Drivers");
-
-            migrationBuilder.DropTable(
                 name: "Predictions");
 
             migrationBuilder.DropTable(
                 name: "SeasonParticipations");
-
-            migrationBuilder.DropTable(
-                name: "Constructors");
 
             migrationBuilder.DropTable(
                 name: "GrandPrixes");

@@ -2,7 +2,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using f1_predictions.Data;
@@ -11,12 +10,10 @@ using f1_predictions.Data;
 
 namespace f1_predictions.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240813201704_AddDefaultRoles")]
-    partial class AddDefaultRoles
+    [DbContext(typeof(F1DbContext))]
+    partial class F1DbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,96 +22,6 @@ namespace f1_predictions.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("YourNamespace.Models.User", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ProfilePicture")
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("f1_predictions.Models.Constructor", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<double>("Points")
-                        .HasColumnType("double precision");
-
-                    b.Property<Guid>("SeasonId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SeasonId");
-
-                    b.ToTable("Constructors");
-                });
-
-            modelBuilder.Entity("f1_predictions.Models.Driver", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ConstructorId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("DriverCode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("DriverNumber")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("SeasonId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ConstructorId");
-
-                    b.HasIndex("SeasonId");
-
-                    b.ToTable("Drivers");
-                });
-
             modelBuilder.Entity("f1_predictions.Models.GrandPrix", b =>
                 {
                     b.Property<Guid>("Id")
@@ -122,11 +29,9 @@ namespace f1_predictions.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("CircuitName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Country")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("IsFinished")
@@ -164,9 +69,6 @@ namespace f1_predictions.Migrations
                     b.Property<Guid>("GpId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("GrandPrixId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("PlayerId")
                         .HasColumnType("uuid");
 
@@ -175,7 +77,7 @@ namespace f1_predictions.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GrandPrixId");
+                    b.HasIndex("GpId");
 
                     b.HasIndex("PlayerId");
 
@@ -195,6 +97,23 @@ namespace f1_predictions.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("4c64de3b-1d1b-464f-8a71-ee25949a689e"),
+                            Name = "Admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("b04d0e07-9b26-4417-a57e-1ed63f0c3b54"),
+                            Name = "GameMaster"
+                        },
+                        new
+                        {
+                            Id = new Guid("12f3cd07-40d9-4732-aaf4-b0b5a5314a44"),
+                            Name = "Player"
+                        });
                 });
 
             modelBuilder.Entity("f1_predictions.Models.Season", b =>
@@ -241,45 +160,35 @@ namespace f1_predictions.Migrations
                     b.ToTable("SeasonParticipations");
                 });
 
-            modelBuilder.Entity("YourNamespace.Models.User", b =>
+            modelBuilder.Entity("f1_predictions.Models.User", b =>
                 {
-                    b.HasOne("f1_predictions.Models.Role", "Role")
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
-                    b.Navigation("Role");
-                });
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-            modelBuilder.Entity("f1_predictions.Models.Constructor", b =>
-                {
-                    b.HasOne("f1_predictions.Models.Season", "Season")
-                        .WithMany("Constructors")
-                        .HasForeignKey("SeasonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.Navigation("Season");
-                });
+                    b.Property<string>("ProfilePicture")
+                        .HasColumnType("text");
 
-            modelBuilder.Entity("f1_predictions.Models.Driver", b =>
-                {
-                    b.HasOne("f1_predictions.Models.Constructor", "Constructor")
-                        .WithMany("Drivers")
-                        .HasForeignKey("ConstructorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uuid");
 
-                    b.HasOne("f1_predictions.Models.Season", "Season")
-                        .WithMany("Drivers")
-                        .HasForeignKey("SeasonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.Navigation("Constructor");
+                    b.HasKey("Id");
 
-                    b.Navigation("Season");
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("f1_predictions.Models.GrandPrix", b =>
@@ -297,11 +206,11 @@ namespace f1_predictions.Migrations
                 {
                     b.HasOne("f1_predictions.Models.GrandPrix", "GrandPrix")
                         .WithMany()
-                        .HasForeignKey("GrandPrixId")
+                        .HasForeignKey("GpId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("YourNamespace.Models.User", "Player")
+                    b.HasOne("f1_predictions.Models.User", "Player")
                         .WithMany()
                         .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -314,7 +223,7 @@ namespace f1_predictions.Migrations
 
             modelBuilder.Entity("f1_predictions.Models.SeasonParticipation", b =>
                 {
-                    b.HasOne("YourNamespace.Models.User", "Participant")
+                    b.HasOne("f1_predictions.Models.User", "Participant")
                         .WithMany()
                         .HasForeignKey("ParticipantId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -331,17 +240,19 @@ namespace f1_predictions.Migrations
                     b.Navigation("Season");
                 });
 
-            modelBuilder.Entity("f1_predictions.Models.Constructor", b =>
+            modelBuilder.Entity("f1_predictions.Models.User", b =>
                 {
-                    b.Navigation("Drivers");
+                    b.HasOne("f1_predictions.Models.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("f1_predictions.Models.Season", b =>
                 {
-                    b.Navigation("Constructors");
-
-                    b.Navigation("Drivers");
-
                     b.Navigation("GrandPrixes");
                 });
 #pragma warning restore 612, 618

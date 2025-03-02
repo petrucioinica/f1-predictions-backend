@@ -13,8 +13,6 @@ namespace f1_predictions.Models
 
         public bool HasStarted { get; set; }
 
-        public ICollection<Constructor> Constructors { get; set; } = new List<Constructor>(); // Navigation property
-        public ICollection<Driver> Drivers { get; set; } = new List<Driver>(); // Navigation property
         public ICollection<GrandPrix> GrandPrixes { get; set; } = new List<GrandPrix>(); // Navigation property
     }
 }

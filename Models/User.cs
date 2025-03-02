@@ -1,7 +1,6 @@
-﻿using f1_predictions.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace YourNamespace.Models
+namespace f1_predictions.Models
 {
     public class User
     {
