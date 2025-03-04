@@ -1,5 +1,7 @@
-﻿using f1_predictions.Models;
+﻿using f1_predictions.Core;
+using f1_predictions.Models;
 using Microsoft.EntityFrameworkCore;
+
 
 namespace f1_predictions.Data
 {
@@ -18,11 +20,42 @@ namespace f1_predictions.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            var adminRoleId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+            var gameMasterRoleId = Guid.Parse("22222222-2222-2222-2222-222222222222");
+            var PlayerRoleId = Guid.Parse("33333333-3333-3333-3333-333333333333");
+
+            var adminPassword = Environment.GetEnvironmentVariable("ADMIN_PASSWORD") ?? "Parola.1!";
+
+            var adminUserId = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
+            var gameMasterUserId = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
+
             modelBuilder.Entity<Role>().HasData(
-                new Role { Id = Guid.NewGuid(), Name = "Admin" },
-                new Role { Id = Guid.NewGuid(), Name = "GameMaster" },
-                new Role { Id = Guid.NewGuid(), Name = "Player" }
+                new Role { Id = adminRoleId, Name = "Admin" },
+                new Role { Id = gameMasterRoleId, Name = "GameMaster" },
+                new Role { Id = PlayerRoleId, Name = "Player" }
             );
+
+            modelBuilder.Entity<User>().HasData(
+      new User
+      {
+          Id = adminUserId,
+          Username = "admin",
+          Email = "admin@f1goes.br",
+          Password = Helpers.HashPassword(adminPassword), // Hash the env var password
+          RoleId = adminRoleId,
+          Role = default!
+
+      },
+      new User
+      {
+          Id = gameMasterUserId,
+          Username = "Game Master",
+          Email = "gamemaster@f1goes.br",
+          Password = Helpers.HashPassword(adminPassword), // Hash the env var password
+          RoleId = adminRoleId,
+          Role = default!
+      }
+  );
 
             modelBuilder.Entity<Season>()
                 .HasMany(s => s.GrandPrixes)
